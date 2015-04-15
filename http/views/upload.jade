@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  h1= title
+  form(method='post' enctype='multipart/form-data' action='upload')
+    input(type='file' name='treasure')
+    br
+    input(type='submit')
+
