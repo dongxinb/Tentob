@@ -1,15 +1,23 @@
 var express = require('express');
 var router = express.Router();
 var htmlize = require('json-htmlize');
+var fs = require('fs');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Command' });
 });
 
+function encrypt(content) {
+    return content;
+}
+
 router.post('/command', function (req, res, next) {
     console.log(req.body);
-    req.app.locals.command = req.body.command;
+    var command = JSON.parse(req.body.command);
+    var id = Date.now();
+    fs.mkdir('./uploads/'+id);
+    req.app.locals.command = JSON.stringify([id].concat(command));
     res.render('success');
 });
 
@@ -52,7 +60,20 @@ router.get('/upload', function(req, res) {
 router.post('/upload', function(req, res) {
     console.log(req.body);
     console.log(req.files);
-    res.sendStatus(200);
+
+    if ((req.body.id === undefined)) {
+        res.sendStatus(500);
+    } else {
+        fs.rename(req.files.treasure.path, './uploads/' + req.body.id + '/' + req.files.treasure.name, function(err) {
+            if (err) {
+                console.trace(err);
+                console.log(err);
+                res.sendStatus(500);
+            } else {
+                res.sendStatus(200);
+            }
+        });
+    }
 });
 
 module.exports = router;
