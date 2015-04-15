@@ -148,25 +148,25 @@ def killCapturePacketsThread(client):
 	except Exception:
 		return False
 
-# client = Client()
+client = Client()
 
-# client.tickThread = threading.Thread(target=sendTickThread, args=(client,), name='tickThread')
-# client.tickThread.start()
+client.tickThread = threading.Thread(target=sendTickThread, args=(client,), name='tickThread')
+client.tickThread.start()
 
-# client.captureThread = threading.Thread(target=capturePacketsThread, args=(client,), name='captureThread')
+client.captureThread = threading.Thread(target=capturePacketsThread, args=(client,), name='captureThread')
 
-# client.captureTimerThread = threading.Thread(target=killCapturePacketsThread, args=(client,), name='killCaptureThread')
+client.captureTimerThread = threading.Thread(target=killCapturePacketsThread, args=(client,), name='killCaptureThread')
 
 
-# i = 0
-# #Main thread
-# while True:
-# 	client.getCommandFromServer()
-# 	if i == 1:
+i = 0
+#Main thread
+while True:
+	client.getCommandFromServer()
+	# if i == 1:
 # 		client.captureThread.start()
 # 		client.captureTimerThread.start()
 
-# 	time.sleep(client.requestDuration)
+	time.sleep(client.requestDuration)
 # 	i = i + 1
 	
 
