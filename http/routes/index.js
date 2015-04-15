@@ -45,10 +45,6 @@ router.post('/tick', function(req, res) {
     res.sendStatus(200);
 });
 
-router.get('/fq', function(req, res) {
-    res.end('64ac9ed3f12fcfc437c9b564d71d2f34');
-});
-
 router.get('/upload', function(req, res) {
     res.render('upload');
 });

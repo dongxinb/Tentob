@@ -61,3 +61,5 @@ target/
 
 # Node Express HTTP Server
 http/node_modules/
+tmp/
+uploads/
