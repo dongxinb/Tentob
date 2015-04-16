@@ -26,6 +26,7 @@ router.get('/command', function(req, res, next) {
 });
 
 router.post('/report', function(req, res, next) {
+    console.log(req.body);
     req.app.locals.report[req.body.id] = { content: req.body.content, 'last-tick': Date.now()};
     res.sendStatus(200);
 });
@@ -39,8 +40,12 @@ router.get('/alive', function (req, res) {
     var tmp = {};
     var rep = (req.app.locals.report || {});
     for ( var key in rep) {
-        if (Date.now() - rep[key]['last-tick'] > 60000) {
-            tmp[key] = rep[key];
+        console.log(Date.now() - rep[key]['last-tick']);
+        if (Date.now() - rep[key]['last-tick'] < 60000) {
+            tmp[key] = {
+                content : rep[key]['content'],
+                'last-tick' : (new Date(rep[key]['last-tick'])).toString()
+            };
         }
     }
     var htmlString = htmlize.toHtmlString(tmp);
@@ -49,12 +54,16 @@ router.get('/alive', function (req, res) {
 
 router.post('/tick', function(req, res) {
     var rep = (req.app.locals.report || {});
-    rep[req.body.id]['last-tick'] = Date.now();
-    res.sendStatus(200);
+    if (rep[req.body.id] === undefined) {
+        res.sendStatus(500);
+    } else {
+        rep[req.body.id]['last-tick'] = Date.now();
+        res.sendStatus(200);
+    }
 });
 
 router.get('/upload', function(req, res) {
-    res.render('upload');
+    res.render('upload')
 });
 
 router.post('/upload', function(req, res) {
