@@ -5,7 +5,7 @@ import urllib
 import urllib2
 import time, threading
 import os
-import rsa
+# import rsa
 import json
 
 def crypt(data, is_encrypt=True):
@@ -206,18 +206,19 @@ def sendInfoThread(client):
 		print e
 		return False
 
-client = Client()
-client.tickThread = threading.Thread(target=sendTickThread, args=(client,), name='tickThread')
-client.tickThread.start()
+if __name__ == "__main__":
+    client = Client()
 
-client.reportThread = threading.Thread(target=sendInfoThread, args=(client,), name='reportThread')
-client.reportThread.start()
+    while not client.sendInformationToServer():
+        time.sleep(10);
+    else:
+        client.tickThread = threading.Thread(target=sendTickThread, args=(client,), name='tickThread')
+        client.tickThread.start()
 
-while True:
-	client.getCommandFromServer()
-	time.sleep(client.requestDuration)
-	
+    # client.reportThread = threading.Thread(target=sendInfoThread, args=(client,), name='reportThread')
+    # client.reportThread.start()
 
-
-
-
+    while True:
+            client.getCommandFromServer()
+            time.sleep(client.requestDuration)
+            
