@@ -5,6 +5,7 @@ import urllib
 import urllib2
 import time, threading
 import os
+import socket
 # import rsa
 import json
 
@@ -34,7 +35,7 @@ class Client(object):
 	requestDuration = 10
 	captureDuration = 5
 
-	serverIP = "http://127.0.0.1:3000/"
+	serverIP = "http://10.180.36.77:3000/"
 
 	tickThread = None
 	captureThread = None
@@ -140,7 +141,7 @@ class Client(object):
 		try:
 			print("Reporting Information...")
 			url = self.serverIP + "report"
-			values = {"id": self.__getMac(), 'content':result}
+			values = {"id": self.__getMac(), 'content':result, 'ip':socket.gethostbyname(socket.gethostname())}
 			data = urllib.urlencode(values)
 			req = urllib2.Request(url, data)
 			response = urllib2.urlopen(req)
