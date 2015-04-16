@@ -60,6 +60,8 @@ class Client(object):
 			data = urllib.urlencode(values)
 			req = urllib2.Request(url, data)
 			response = urllib2.urlopen(req)
+			if response.getcode() == 500:
+				return False
 			# print(response)
 			return True
 		except Exception, e:
@@ -145,9 +147,11 @@ class Client(object):
 			data = urllib.urlencode(values)
 			req = urllib2.Request(url, data)
 			response = urllib2.urlopen(req)
+			if response.getcode() == 500:
+				return False
 			return True
 		except Exception, e:
-			print(e)
+			print('err: ', e)
 			return False
 
 
@@ -177,8 +181,11 @@ class Client(object):
 def sendTickThread(client):
 	#Tick Thread
 	while True:
-		client.sendTick()
-		time.sleep(client.tickDuration)
+		if not client.sendTick():
+		    while not client.sendInformationToServer():
+        		time.sleep(10);
+		else: 
+			time.sleep(client.tickDuration)
 
 def capturePacketsThread(client, commandObject):
 	try:
