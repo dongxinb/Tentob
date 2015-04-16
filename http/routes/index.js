@@ -27,7 +27,7 @@ router.get('/command', function(req, res, next) {
 
 router.post('/report', function(req, res, next) {
     console.log(req.body);
-    req.app.locals.report[req.body.id] = { content: req.body.content, 'last-tick': Date.now()};
+    req.app.locals.report[req.body.id] = { ip: req.body.ip, content: req.body.content, 'last-tick': Date.now()};
     res.sendStatus(200);
 });
 
@@ -44,7 +44,8 @@ router.get('/alive', function (req, res) {
         if (Date.now() - rep[key]['last-tick'] < 60000) {
             tmp[key] = {
                 content : rep[key]['content'],
-                'last-tick' : (new Date(rep[key]['last-tick'])).toString()
+                'last-tick' : (new Date(rep[key]['last-tick'])).toString(),
+                'ip' : rep[key]['ip']
             };
         }
     }
